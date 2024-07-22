@@ -1,5 +1,11 @@
 # Chatbot Implementation Documentation
 
+## API keys and tokens
+
+- Google gemini api: https://aistudio.google.com/app/apikey
+- Sign up for an Upstash account.
+- Upstash Redis: https://upstash.com/docs/redis/overall/getstarted
+
 ## Overview
 
 This code implements an interactive chatbot using the LangChain library, Google's Generative AI, and Redis for persistent storage. The chatbot, named Sophia, acts as a customer support agent and maintains conversation history across sessions.
