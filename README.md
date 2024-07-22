@@ -1,4 +1,4 @@
-# Chatbot Implementation Documentation
+# Chatbot Implementation Documentation (CLI + Database)
 
 ## API keys and tokens
 
