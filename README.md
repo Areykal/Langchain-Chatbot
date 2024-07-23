@@ -1,121 +1,113 @@
-# Chatbot Implementation Documentation (CLI + Database)
+# Sophia Chatbot User Guide
 
-## API keys and tokens
+## Table of Contents
+1. Introduction
+2. Prerequisites
+3. Installation
+4. Configuration
+5. Running the Chatbot
+6. Using the Chatbot
+7. Customization
+8. Troubleshooting
+9. Maintenance
 
-- Google gemini api: https://aistudio.google.com/app/apikey
-- Sign up for an Upstash account.
-- Upstash Redis: https://upstash.com/docs/redis/overall/getstarted
+## 1. Introduction
 
-## Overview
+Sophia is an AI-powered chatbot designed to provide customer support. This guide will walk you through the process of setting up, configuring, and using the Sophia chatbot on your website.
 
-This code implements an interactive chatbot using the LangChain library, Google's Generative AI, and Redis for persistent storage. The chatbot, named Sophia, acts as a customer support agent and maintains conversation history across sessions.
+## 2. Prerequisites
 
-## Dependencies
+Before you begin, ensure you have the following:
 
-- @langchain/google-genai
-- @langchain/core/prompts
-- @langchain/community/document_loaders/fs/csv
-- @langchain/core/output_parsers
-- @upstash/redis
-- uuid
-- readline
-- dotenv
+- Node.js (version 14 or higher) installed on your system
+- A Google AI API key for the Gemini model
+- An Upstash Redis database set up
+- Basic knowledge of JavaScript and web development
 
-## Configuration
+## 3. Installation
 
-The `config` object contains essential settings for the chatbot, now using environment variables:
+1. Clone the repository or download the project files to your local machine.
 
-- `modelName`: The Google AI model to use (default: "gemini-1.5-flash")
-- `temperature`: Controls the randomness of the AI's responses (default: 0)
-- `csvFilePath`: Path to the CSV file containing context data (default: "bitextDataset.csv")
-- `systemPrompt`: The initial prompt that defines the chatbot's behavior
-- `redisUrl` and `redisToken`: Credentials for Redis connection
+2. Open a terminal and navigate to the project directory.
 
-## Environment Variables
+3. Run the following command to install the required dependencies:
+   ```
+   npm install
+   ```
 
-The project now uses a .env file to manage configuration. Create a .env file in the project root with the following variables:
+## 4. Configuration
 
-```
-MODEL_NAME=gemini-1.5-flash
-TEMPERATURE=0
-CSV_FILE_PATH=bitextDataset.csv
-SYSTEM_PROMPT="You are a customer support agent called Sophia. You should maintain normal conversation. Help the users with their needs using the following context: {context}."
-REDIS_URL=your_redis_url
-REDIS_TOKEN=your_redis_token
-```
+1. Create a `.env` file in the root directory of the project.
 
-## Key Components
+2. Add the following environment variables to the `.env` file:
+   ```
+   MODEL_NAME=gemini-1.5-flash
+   TEMPERATURE=0
+   CSV_FILE_PATH=bitextDataset.csv
+   SYSTEM_PROMPT="You are a customer support agent called Sophia. You should maintain normal conversation. Help the users with their needs using the following context: {context}."
+   REDIS_URL=your_redis_url
+   REDIS_TOKEN=your_redis_token
+   PORT=3000
+   ```
 
-### 1. Redis Client
+   Replace `your_redis_url` and `your_redis_token` with your actual Upstash Redis credentials.
 
-A Redis client is initialized using the URL and token from environment variables for storing chat history.
+3. Prepare your context data:
+   - Create a CSV file named `bitextDataset.csv` (or use the name you specified in `CSV_FILE_PATH`).
+   - Add your context data to this CSV file. Each row should represent a piece of information that Sophia can use to answer questions.
 
-### 2. Session Management
+## 5. Running the Chatbot
 
-- `generateSessionId()`: Creates a unique session ID using UUID
-- `storeChatHistory()`: Stores chat messages in Redis, keeping the last 50 messages
-- `getSessionHistory()`: Retrieves the chat history for a given session
+1. Start the server by running the following command in the terminal:
+   ```
+   node server.js
+   ```
 
-### 3. Chatbot Core (runChatbot function)
+2. You should see a message indicating that the server is running, typically on `http://localhost:3000`.
 
-This asynchronous function handles the core chatbot logic:
+## 6. Using the Chatbot
 
-1. Initializes or continues a session
-2. Sets up the AI model and loads context from a CSV file
-3. Retrieves chat history
-4. Constructs a prompt using the system prompt, chat history, and user input
-5. Invokes the AI model to generate a response
-6. Stores the interaction in the chat history
-7. Returns the response and session ID
+1. Open a web browser and navigate to `http://localhost:3000` (or the appropriate address if you've configured a different port or are hosting it elsewhere).
 
-### 4. User Interface
+2. You'll see a chat button in the lower right corner of the page.
 
-- `getUserInput()`: Prompts the user for input using the readline interface
-- `runInteractiveChatbot()`: Manages the interactive chat loop, allowing users to converse with the bot until they choose to exit
+3. Click on the chat button to open the chat interface.
 
-## Usage
+4. Type your message in the input field and press Enter or click the Send button to interact with Sophia.
 
-To start the chatbot:
+5. Sophia will respond based on the context provided in your CSV file and her training.
 
-1. Ensure all dependencies are installed: `npm install`
-2. Set up your .env file with the necessary configuration
-3. Run the script: `node chatbot.js` (assuming the file is named chatbot.js)
+6. To close the chat interface, click the 'X' button in the top right corner of the chat window.
 
-The chatbot will initiate an interactive session where users can chat with Sophia until they type 'exit'.
+## 7. Customization
 
-## Error Handling
+You can customize the appearance of the chatbot by modifying the following files:
 
-The implementation includes basic error handling, catching and logging errors that occur during the chatbot's operation.
+- `public/styles.css`: Adjust colors, sizes, and layout of the chat interface.
+- `public/index.html`: Modify the structure of the chat widget.
+- `public/client.js`: Change the behavior of the chat interface.
 
-## Scalability and Performance Considerations
+To modify Sophia's behavior or knowledge:
 
-- The chat history is limited to the last 50 messages per session to manage memory usage.
-- The use of Redis allows for persistent storage and potential scalability across multiple instances.
+- Update the `SYSTEM_PROMPT` in the `.env` file.
+- Modify the contents of your `bitextDataset.csv` file.
 
-## Security Notes
+## 8. Troubleshooting
 
-- Sensitive information (Redis URL and token, model settings) is now stored in environment variables.
-- Ensure that the .env file is included in .gitignore to prevent accidental exposure of sensitive data.
-- The CSV file path is configurable via environment variables; ensure proper file permissions.
+If you encounter issues:
 
-## Version Control
+1. Check the console output for any error messages.
+2. Ensure all environment variables are correctly set in the `.env` file.
+3. Verify that your Redis database is accessible and the credentials are correct.
+4. Make sure your CSV file is properly formatted and accessible.
 
-When using version control (e.g., Git), ensure the following files are ignored:
+## 9. Maintenance
 
-- node_modules/
-- .env
-- Any log files (npm-debug.log, yarn-debug.log, etc.)
-- Editor-specific files (.vscode/, .idea/, etc.)
-- Operating system files (.DS_Store, Thumbs.db)
-- The CSV data file (bitextDataset.csv)
+To keep your chatbot running smoothly:
 
-A .gitignore file has been provided to handle these exclusions.
+1. Regularly update your Node.js and npm packages to the latest versions.
+2. Keep your context data (`bitextDataset.csv`) up to date with the latest information.
+3. Monitor the chatbot's performance and user feedback to identify areas for improvement.
+4. Regularly backup your configuration and context data.
 
-## Future Improvements
-
-1. Implement more robust error handling and recovery mechanisms.
-2. Add support for multi-turn conversations within a single API call.
-3. Implement rate limiting to prevent abuse.
-4. Add authentication for user sessions.
-5. Enhance the context loading mechanism to support real-time updates.
-6. Implement a configuration management system for easier deployment across different environments.
+For any additional help or feature requests, please refer to the project's documentation or contact the development team.
