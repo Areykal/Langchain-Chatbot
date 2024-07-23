@@ -2,7 +2,7 @@
   "name": "test",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "script.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,6 +16,7 @@
     "@upstash/redis": "^1.33.0",
     "d3-dsv": "^2.0.0",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "uuid": "^10.0.0"
   }
 }

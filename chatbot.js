@@ -4,7 +4,6 @@ import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { Redis } from "@upstash/redis";
 import { v4 as uuidv4 } from "uuid";
-import readline from "readline";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -27,8 +26,6 @@ const redis = new Redis({
   token: config.redisToken,
 });
 
-// ... rest of the code remains the same
-
 // Function to generate a new session ID
 function generateSessionId() {
   return uuidv4();
@@ -48,7 +45,7 @@ async function getSessionHistory(sessionId) {
 }
 
 // Async function to initialize and run the chatbot
-async function runChatbot(userInput, sessionId = null) {
+export async function runChatbot(userInput, sessionId = null) {
   try {
     sessionId = sessionId || generateSessionId();
 
@@ -87,51 +84,3 @@ async function runChatbot(userInput, sessionId = null) {
     throw error;
   }
 }
-
-// Function to get user input (unchanged)
-function getUserInput(prompt) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise((resolve) => {
-    rl.question(prompt, (answer) => {
-      rl.close();
-      resolve(answer);
-    });
-  });
-}
-
-// Main function to run the interactive chatbot
-async function runInteractiveChatbot() {
-  let sessionId = null;
-
-  console.log("Welcome to the interactive chatbot!");
-  console.log("Type 'exit' to end the conversation.");
-
-  while (true) {
-    const userInput = await getUserInput("\nYou: ");
-
-    if (userInput.toLowerCase() === "exit") {
-      console.log("Thank you for using the chatbot. Goodbye!");
-      break;
-    }
-
-    try {
-      const { response, sessionId: newSessionId } = await runChatbot(
-        userInput,
-        sessionId
-      );
-      sessionId = newSessionId;
-
-      console.log(`\nSophia: ${response}`);
-    } catch (error) {
-      console.error("An error occurred:", error);
-      console.log("Please try again.");
-    }
-  }
-}
-
-// Run the interactive chatbot
-runInteractiveChatbot();
