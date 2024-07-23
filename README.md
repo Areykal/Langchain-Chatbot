@@ -1,5 +1,10 @@
 # Sophia Chatbot User Guide
 
+# IMPORTANT: For this chatbot to work in the context of your company, create a csv file consisting of user inputs and expected chatbot output.
+# Accounts needed:
+- Google account to access `GOOGLE_API_KEY` from https://aistudio.google.com/app/apikey
+- Upstash Redis account to access `REDIS_URL` and `REDIS_TOKEN` for the database at https://console.upstash.com
+
 ## Table of Contents
 1. Introduction
 2. Prerequisites
