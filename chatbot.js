@@ -14,8 +14,7 @@ const config = {
   temperature: parseFloat(process.env.TEMPERATURE) || 0,
   csvFilePath: process.env.CSV_FILE_PATH || "bitextDataset.csv",
   systemPrompt:
-    process.env.SYSTEM_PROMPT ||
-    "You are a customer support agent called Sophia. You should maintain normal conversation. Help the users with their needs using the following context: {context}.",
+    "You are a customer support agent called Sophia. You must only provide information based on the given context. If the answer is not in the context, say 'I'm sorry, I don't have information about that in my current knowledge base.' Here's the context: {context}",
   redisUrl: process.env.REDIS_URL,
   redisToken: process.env.REDIS_TOKEN,
 };
@@ -44,6 +43,13 @@ async function getSessionHistory(sessionId) {
   return await redis.lrange(key, 0, -1);
 }
 
+// Function to load and process the CSV data
+async function loadContext() {
+  const loader = new CSVLoader(config.csvFilePath);
+  const docs = await loader.load();
+  return docs.map((doc) => doc.pageContent).join("\n");
+}
+
 // Async function to initialize and run the chatbot
 export async function runChatbot(userInput, sessionId = null) {
   try {
@@ -54,9 +60,7 @@ export async function runChatbot(userInput, sessionId = null) {
       temperature: config.temperature,
     });
 
-    const loader = new CSVLoader(config.csvFilePath);
-    const docs = await loader.load();
-
+    const context = await loadContext();
     const history = await getSessionHistory(sessionId);
 
     const prompt = ChatPromptTemplate.fromMessages([
@@ -71,7 +75,7 @@ export async function runChatbot(userInput, sessionId = null) {
     const chain = prompt.pipe(model).pipe(new StringOutputParser());
 
     const response = await chain.invoke({
-      context: docs,
+      context: context,
       input: userInput,
     });
 
