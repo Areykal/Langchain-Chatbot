@@ -14,7 +14,7 @@ const config = {
   csvFilePath: process.env.CSV_FILE_PATH || "bitextDataset.csv",
   systemPrompt:
     process.env.SYSTEM_PROMPT ||
-    "You are a customer support agent called Sophia. You should maintain normal conversation. Help the users with their needs using the following context: {context}.",
+    "You are a customer support agent called Sophia. You should maintain greetings. You must only answer the user questions based on this context: {context}.",
   redisUrl: process.env.REDIS_URL,
   redisToken: process.env.REDIS_TOKEN,
 };
