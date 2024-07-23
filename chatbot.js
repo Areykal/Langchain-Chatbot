@@ -3,7 +3,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { Redis } from "@upstash/redis";
-import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -14,7 +13,8 @@ const config = {
   temperature: parseFloat(process.env.TEMPERATURE) || 0,
   csvFilePath: process.env.CSV_FILE_PATH || "bitextDataset.csv",
   systemPrompt:
-    "You are a customer support agent called Sophia. You must only provide information based on the given context. If the answer is not in the context, say 'I'm sorry, I don't have information about that in my current knowledge base.' Here's the context: {context}",
+    process.env.SYSTEM_PROMPT ||
+    "You are a customer support agent called Sophia. You should maintain normal conversation. Help the users with their needs using the following context: {context}.",
   redisUrl: process.env.REDIS_URL,
   redisToken: process.env.REDIS_TOKEN,
 };
@@ -27,7 +27,12 @@ const redis = new Redis({
 
 // Function to generate a new session ID
 function generateSessionId() {
-  return uuidv4();
+  const date = new Date();
+  const timestamp = date.toISOString().slice(0, 10).replace(/-/g, "");
+  const sequence = String(
+    date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds()
+  ).padStart(5, "0");
+  return `${timestamp}-${sequence}`;
 }
 
 // Simplified function to store chat history

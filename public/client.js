@@ -1,9 +1,22 @@
 let sessionId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  const chatButton = document.getElementById("chat-button");
+  const chatPopup = document.getElementById("chat-popup");
+  const closeChat = document.getElementById("close-chat");
   const chatMessages = document.getElementById("chat-messages");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
+
+  chatButton.addEventListener("click", () => {
+    chatPopup.style.display = "flex";
+    chatButton.style.display = "none";
+  });
+
+  closeChat.addEventListener("click", () => {
+    chatPopup.style.display = "none";
+    chatButton.style.display = "block";
+  });
 
   sendButton.addEventListener("click", sendMessage);
   userInput.addEventListener("keypress", (e) => {
